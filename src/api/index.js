@@ -24,7 +24,16 @@ api.interceptors.request.use(
 
 // Response interceptor: handle 401
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    const resData = response.data
+    // 后端返回 HTTP 200 但业务码非 200 时，转为错误抛出
+    if (resData && resData.code !== undefined && resData.code !== 200) {
+      const err = new Error(resData.message || '请求失败')
+      err.response = { data: resData, status: resData.code }
+      return Promise.reject(err)
+    }
+    return response
+  },
   (error) => {
     if (error.response?.status === 401) {
       localStorage.removeItem('token')

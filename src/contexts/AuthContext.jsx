@@ -18,15 +18,7 @@ export function AuthProvider({ children }) {
     setLoading(true)
     try {
       const res = await authAPI.login(credentials)
-      // const data = res.data?.data || res.data
-      const resData = res.data
-
-      if (resData.code && resData.code !== 200) {
-        toast.error(resData.message || '登录失败')
-        return false
-      }
-
-      const data = resData.data || resData
+      const data = res.data?.data || res.data
       const newToken = data.token || data.access_token
       const userInfo = data.user || { username: credentials.username }
 
